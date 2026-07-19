@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRS // RPR DIAGNOSTIC MAP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-base: #0a0e0c;
+            --panel-bg: #121c16;
+            --border-color: #23362a;
+            --brand-orange: #FF851B;
+            --brand-orange-dark: #D35400;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: #e5e5e5;
+            padding: 1rem;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .glass-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .svg-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background: radial-gradient(circle at center, #1a2920 0%, #0a0e0c 70%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .torso-line {
+            stroke: #3f4e44;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        /* Pulse Nodes */
+        .rpr-node {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background-color: var(--brand-orange);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--brand-orange);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .rpr-node::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100%; height: 100%;
+            background-color: var(--brand-orange);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes ping {
+            75%, 100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+        }
+
+        .node-label {
+            position: absolute;
+            background: rgba(10, 14, 12, 0.9);
+            border: 1px solid var(--brand-orange-dark);
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            border-radius: 4px;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 20;
+            transform: translate(15px, -50%);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-panel">
+        
+        <!-- Header -->
+        <header class="bg-[#0f1612] p-6 border-b border-[#23362a]">
+            <h1 class="text-3xl font-black uppercase text-white tracking-tighter">
+                RPR <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF851B] to-[#D35400]">DIAGNOSTIC MAP</span>
+            </h1>
+            <p class="mono text-xs text-[#5c7a65] mt-1 tracking-widest">CLINICAL NEURO-LYMPHATIC ACTIVATION TARGETS</p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+            
+            <!-- ANTERIOR (FRONT) SECTION -->
+            <div class="p-6 border-r border-[#23362a]">
+                <h2 class="mono text-sm text-orange-400 font-bold mb-4 text-center tracking-widest">ANTERIOR CHAIN (FRONT)</h2>
+                
+                <div class="svg-container aspect-[3/4] mb-6">
+                    <svg viewBox="0 0 200 280" class="w-full h-full">
+                        <!-- Basic Front Torso Outline -->
+                        <path d="M85,20 C85,10 115,10 115,20 L115,35 C125,40 140,45 160,55 L170,100 L155,140 L145,250 L55,250 L45,140 L30,100 L40,55 C60,45 75,40 85,35 Z" class="torso-line" />
+                        <path d="M100,35 L100,250" class="torso-line" stroke-dasharray="2 4" opacity="0.3"/> <!-- Midline -->
+                        <path d="M60,55 Q100,70 140,55" class="torso-line" opacity="0.4"/> <!-- Clavicle Line -->
+                        <path d="M70,150 Q100,160 130,150" class="torso-line" opacity="0.4"/> <!-- Lower Ribs/Diaphragm -->
+                    </svg>
+
+                    <!-- NODES: ANTERIOR -->
+                    <!-- Glutes (Jaw) -->
+                    <div class="rpr-node" style="top: 15%; left: 38%;"></div><div class="node-label" style="top: 15%; left: 38%;">GLUTES (Base of Skull/Jaw)</div>
+                    <div class="rpr-node" style="top: 15%; left: 62%;"></div>
+                    
+                    <!-- Rotator Cuff (Clavicle) -->
+                    <div class="rpr-node" style="top: 22%; left: 25%;"></div><div class="node-label" style="top: 22%; left: 25%;">CUFF (Under Clavicle)</div>
+                    <div class="rpr-node" style="top: 22%; left: 75%;"></div>
+
+                    <!-- Diaphragm (Sternum) -->
+                    <div class="rpr-node" style="top: 35%; left: 50%;"></div><div class="node-label" style="top: 35%; left: 50%;">DIAPHRAGM (Sternum)</div>
+
+                    <!-- Psoas (Belly Button & Down 1 inch, Out 1 inch) -->
+                    <div class="rpr-node" style="top: 60%; left: 42%;"></div><div class="node-label" style="top: 60%; left: 42%;">PSOAS (Below/Lateral to Navel)</div>
+                    <div class="rpr-node" style="top: 60%; left: 58%;"></div>
+                </div>
+
+                <!-- Text Breakdown -->
+                <div class="space-y-3">
+                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
+                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">1.</span> Glutes (Base of Skull/Jaw)</h3>
+                        <p class="text-[10px] text-zinc-400">Scrub deeply directly under the jawline/base of the ear. Flips the primary hip extension switch.</p>
+                    </div>
+                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
+                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">2.</span> Diaphragm (Sternum)</h3>
+                        <p class="text-[10px] text-zinc-400">Rub vigorously up and down the center of the breastbone. Crucial for core bracing and breathing.</p>
+                    </div>
+                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
+                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">3.</span> Psoas (Lower Abdomen)</h3>
+                        <p class="text-[10px] text-zinc-400">Find the navel. Move 1 inch down, 1 inch out. Dig deep into the tissue. Releases tight hips.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POSTERIOR (BACK) SECTION -->
+            <div class="p-6">
+                <h2 class="mono text-sm text-orange-400 font-bold mb-4 text-center tracking-widest">POSTERIOR CHAIN (BACK)</h2>
+                
+                <div class="svg-container aspect-[3/4] mb-6">
+                    <svg viewBox="0 0 200 280" class="w-full h-full">
+                        <!-- Basic Back Torso Outline -->
+                        <path d="M85,20 C85,10 115,10 115,20 L115,35 C125,40 140,45 160,55 L170,100 L155,140 L145,250 L55,250 L45,140 L30,100 L40,55 C60,45 75,40 85,35 Z" class="torso-line" />
+                        <path d="M100,20 L100,250" class="torso-line" opacity="0.6"/> <!-- Spine -->
+                        <path d="M60,150 L100,165 L140,150" class="torso-line" opacity="0.4"/> <!-- 12th Rib Line -->
+                        <path d="M85,230 L115,230 L100,260 Z" class="torso-line" opacity="0.4"/> <!-- Sacrum -->
+                    </svg>
+
+                    <!-- NODES: POSTERIOR -->
+                    <!-- QL / Lateral Sling (12th Rib) -->
+                    <div class="rpr-node" style="top: 55%; left: 32%;"></div><div class="node-label" style="top: 55%; left: 10%; transform: translate(0, -50%);">QL & LAT SLING (12th Rib)</div>
+                    <div class="rpr-node" style="top: 55%; left: 68%;"></div>
+
+                    <!-- Glutes / Hamstrings (Sacrum) -->
+                    <div class="rpr-node" style="top: 85%; left: 50%;"></div><div class="node-label" style="top: 85%; left: 50%;">HAMSTRINGS (Sacrum/Tailbone)</div>
+                </div>
+
+                <!-- Text Breakdown -->
+                <div class="space-y-3">
+                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
+                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">4.</span> QL & Lateral Sling (12th Rib)</h3>
+                        <p class="text-[10px] text-zinc-400">Scrub the bottom edge of the lowest floating rib on the back. Unbinds the opposite lat and shoulder.</p>
+                    </div>
+                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
+                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">5.</span> Hamstrings (Sacrum)</h3>
+                        <p class="text-[10px] text-zinc-400">Vigorously scrub the flat bone at the base of the spine (tailbone). Prevents hamstring pulls.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
