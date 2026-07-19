@@ -7,13 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
 
         :root {
+            /* Earthy Green Theme */
             --bg-base: #0a0e0c;
             --panel-bg: #121c16;
             --border-color: #23362a;
-            --brand-orange: #FF851B;
+            
+            /* Orange Gradients */
+            --brand-orange-light: #FF851B;
             --brand-orange-dark: #D35400;
         }
 
@@ -22,48 +25,77 @@
             background-color: var(--bg-base);
             color: #e5e5e5;
             padding: 1rem;
+            margin: 0;
+            min-height: 100vh;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .text-gradient-orange {
+            background: linear-gradient(to right, var(--brand-orange-light), var(--brand-orange-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
         .glass-panel {
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            max-width: 1200px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            max-width: 1400px;
             margin: 0 auto;
             overflow: hidden;
+            position: relative;
+        }
+        
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--brand-orange-light), transparent);
         }
 
         .svg-container {
             position: relative;
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             margin: 0 auto;
-            background: radial-gradient(circle at center, #1a2920 0%, #0a0e0c 70%);
+            background: radial-gradient(circle at center, #1a2920 0%, #0a0e0c 80%);
             border: 1px solid var(--border-color);
             border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
         }
 
-        .torso-line {
-            stroke: #3f4e44;
-            stroke-width: 2;
-            fill: none;
+        /* Anatomical Wireframe Styles */
+        .anatomy-line {
+            stroke: #4a6352; /* Muted earthy green for the body */
+            stroke-width: 1.5;
+            fill: rgba(74, 99, 82, 0.05);
+            stroke-linejoin: round;
             stroke-linecap: round;
+            transition: all 0.3s ease;
         }
 
         /* Pulse Nodes */
         .rpr-node {
             position: absolute;
-            width: 14px;
-            height: 14px;
-            background-color: var(--brand-orange);
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #FF851B 0%, #D35400 100%);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px var(--brand-orange);
+            box-shadow: 0 0 15px var(--brand-orange-light);
             cursor: pointer;
             z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .rpr-node:hover, .rpr-node.active {
+            transform: translate(-50%, -50%) scale(1.4);
+            background: #fff;
+            box-shadow: 0 0 25px var(--brand-orange-light), 0 0 10px #fff;
         }
 
         .rpr-node::after {
@@ -71,29 +103,41 @@
             position: absolute;
             top: 50%; left: 50%;
             width: 100%; height: 100%;
-            background-color: var(--brand-orange);
+            background-color: var(--brand-orange-light);
             border-radius: 50%;
             transform: translate(-50%, -50%);
             animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+            z-index: -1;
         }
 
         @keyframes ping {
-            75%, 100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+            75%, 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
         }
 
-        .node-label {
+        /* Diagnostic Info Panel */
+        #diagnostic-info {
+            background-color: #0a0e0c;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--brand-orange-light);
+            transition: all 0.3s ease;
+        }
+
+        .scanner-line {
             position: absolute;
-            background: rgba(10, 14, 12, 0.9);
-            border: 1px solid var(--brand-orange-dark);
-            color: #fff;
-            padding: 4px 8px;
-            font-size: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            border-radius: 4px;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 133, 27, 0.5), transparent);
+            box-shadow: 0 0 10px rgba(255, 133, 27, 0.5);
+            animation: scan 4s linear infinite;
             pointer-events: none;
-            white-space: nowrap;
-            z-index: 20;
-            transform: translate(15px, -50%);
+            z-index: 5;
+        }
+
+        @keyframes scan {
+            0% { top: -10%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 110%; opacity: 0; }
         }
     </style>
 </head>
@@ -102,100 +146,220 @@
     <div class="glass-panel">
         
         <!-- Header -->
-        <header class="bg-[#0f1612] p-6 border-b border-[#23362a]">
-            <h1 class="text-3xl font-black uppercase text-white tracking-tighter">
-                RPR <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF851B] to-[#D35400]">DIAGNOSTIC MAP</span>
-            </h1>
-            <p class="mono text-xs text-[#5c7a65] mt-1 tracking-widest">CLINICAL NEURO-LYMPHATIC ACTIVATION TARGETS</p>
+        <header class="bg-[#0f1612] p-6 md:p-8 border-b border-[#23362a] flex flex-col md:flex-row justify-between items-start md:items-end">
+            <div>
+                <h1 class="text-3xl md:text-5xl font-black uppercase text-white tracking-tighter leading-none">
+                    my<span class="text-gradient-orange">TRS</span>method
+                </h1>
+                <p class="mono text-xs md:text-sm text-[#5c7a65] mt-2 tracking-widest font-bold">RPR // CLINICAL NEURO-LYMPHATIC ACTIVATION TARGETS</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <span class="inline-flex items-center px-3 py-1 border border-orange-500/30 text-orange-400 mono text-[10px] font-bold uppercase tracking-widest bg-orange-500/10 rounded">
+                    <i class="fas fa-satellite-dish mr-2 animate-pulse"></i> Interactive Scanner Active
+                </span>
+            </div>
         </header>
 
-        <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
             
-            <!-- ANTERIOR (FRONT) SECTION -->
-            <div class="p-6 border-r border-[#23362a]">
-                <h2 class="mono text-sm text-orange-400 font-bold mb-4 text-center tracking-widest">ANTERIOR CHAIN (FRONT)</h2>
+            <!-- LEFT: ANTERIOR MAP -->
+            <div class="lg:col-span-4 p-6 border-b lg:border-b-0 lg:border-r border-[#23362a] flex flex-col items-center">
+                <h2 class="mono text-sm text-orange-400 font-bold mb-6 text-center tracking-widest bg-[#0a0e0c] px-4 py-1 rounded border border-[#1f2e24]">ANTERIOR (FRONT)</h2>
                 
-                <div class="svg-container aspect-[3/4] mb-6">
-                    <svg viewBox="0 0 200 280" class="w-full h-full">
-                        <!-- Basic Front Torso Outline -->
-                        <path d="M85,20 C85,10 115,10 115,20 L115,35 C125,40 140,45 160,55 L170,100 L155,140 L145,250 L55,250 L45,140 L30,100 L40,55 C60,45 75,40 85,35 Z" class="torso-line" />
-                        <path d="M100,35 L100,250" class="torso-line" stroke-dasharray="2 4" opacity="0.3"/> <!-- Midline -->
-                        <path d="M60,55 Q100,70 140,55" class="torso-line" opacity="0.4"/> <!-- Clavicle Line -->
-                        <path d="M70,150 Q100,160 130,150" class="torso-line" opacity="0.4"/> <!-- Lower Ribs/Diaphragm -->
+                <div class="svg-container aspect-[1/2]">
+                    <div class="scanner-line"></div>
+                    <!-- High-Fidelity Anterior Anatomy SVG -->
+                    <svg viewBox="0 0 200 400" class="w-full h-full pointer-events-none">
+                        <g class="anatomy-line">
+                            <!-- Head & Neck -->
+                            <path d="M 85 20 C 85 5 115 5 115 20 C 115 35 105 45 100 50 C 95 45 85 35 85 20 Z"/>
+                            <path d="M 92 40 L 92 55 M 108 40 L 108 55"/>
+                            <!-- Torso Outline -->
+                            <path d="M 85 55 C 60 55 40 65 35 85 L 35 130 C 45 130 55 170 60 200 L 100 220 L 140 200 C 145 170 155 130 165 130 L 165 85 C 160 65 140 55 115 55 Z"/>
+                            <!-- Pecs -->
+                            <path d="M 100 65 C 80 65 50 75 45 95 C 60 105 90 105 100 100 C 110 105 140 105 155 95 C 150 75 120 65 100 65 Z"/>
+                            <line x1="100" y1="65" x2="100" y2="100"/>
+                            <!-- Abs -->
+                            <rect x="86" y="115" width="13" height="18" rx="2"/>
+                            <rect x="101" y="115" width="13" height="18" rx="2"/>
+                            <rect x="86" y="135" width="13" height="18" rx="2"/>
+                            <rect x="101" y="135" width="13" height="18" rx="2"/>
+                            <rect x="86" y="155" width="13" height="18" rx="2"/>
+                            <rect x="101" y="155" width="13" height="18" rx="2"/>
+                            <!-- Arms -->
+                            <path d="M 35 85 C 20 90 15 110 15 140 L 22 200 L 35 130 Z"/>
+                            <path d="M 165 85 C 180 90 185 110 185 140 L 178 200 L 165 130 Z"/>
+                            <!-- Legs -->
+                            <path d="M 60 200 C 45 250 50 280 55 310 L 85 310 C 95 280 95 230 95 215 Z"/>
+                            <path d="M 140 200 C 155 250 150 280 145 310 L 115 310 C 105 280 105 230 105 215 Z"/>
+                            <!-- Calves -->
+                            <path d="M 55 310 C 45 350 55 380 60 390 L 80 390 C 85 360 85 330 85 310 Z"/>
+                            <path d="M 145 310 C 155 350 145 380 140 390 L 120 390 C 115 360 115 330 115 310 Z"/>
+                        </g>
                     </svg>
 
-                    <!-- NODES: ANTERIOR -->
-                    <!-- Glutes (Jaw) -->
-                    <div class="rpr-node" style="top: 15%; left: 38%;"></div><div class="node-label" style="top: 15%; left: 38%;">GLUTES (Base of Skull/Jaw)</div>
-                    <div class="rpr-node" style="top: 15%; left: 62%;"></div>
-                    
-                    <!-- Rotator Cuff (Clavicle) -->
-                    <div class="rpr-node" style="top: 22%; left: 25%;"></div><div class="node-label" style="top: 22%; left: 25%;">CUFF (Under Clavicle)</div>
-                    <div class="rpr-node" style="top: 22%; left: 75%;"></div>
+                    <!-- INTERACTIVE RPR NODES: ANTERIOR -->
+                    <div class="rpr-node" style="top: 10%; left: 46%;" data-title="GLUTES (Jawline)" data-desc="Scrub deeply underneath the jawline and base of the ear. This flips the primary hip extension switch and releases the jaw-clenching reflex that protects the cervical spine."></div>
+                    <div class="rpr-node" style="top: 10%; left: 54%;" data-title="GLUTES (Jawline)" data-desc="Scrub deeply underneath the jawline and base of the ear. This flips the primary hip extension switch and releases the jaw-clenching reflex that protects the cervical spine."></div>
 
-                    <!-- Diaphragm (Sternum) -->
-                    <div class="rpr-node" style="top: 35%; left: 50%;"></div><div class="node-label" style="top: 35%; left: 50%;">DIAPHRAGM (Sternum)</div>
+                    <div class="rpr-node" style="top: 16%; left: 32%;" data-title="ROTATOR CUFF (Clavicle)" data-desc="Scrub the entire underside of the collarbone, moving outward to the armpit (Coracoid process). Clears neurological static inhibiting the supraspinatus and infraspinatus."></div>
+                    <div class="rpr-node" style="top: 16%; left: 68%;" data-title="ROTATOR CUFF (Clavicle)" data-desc="Scrub the entire underside of the collarbone, moving outward to the armpit (Coracoid process). Clears neurological static inhibiting the supraspinatus and infraspinatus."></div>
 
-                    <!-- Psoas (Belly Button & Down 1 inch, Out 1 inch) -->
-                    <div class="rpr-node" style="top: 60%; left: 42%;"></div><div class="node-label" style="top: 60%; left: 42%;">PSOAS (Below/Lateral to Navel)</div>
-                    <div class="rpr-node" style="top: 60%; left: 58%;"></div>
-                </div>
+                    <div class="rpr-node" style="top: 23.5%; left: 50%;" data-title="DIAPHRAGM (Sternum)" data-desc="Rub vigorously up and down the center of the breastbone. Crucial for unlocking core bracing capacity and enabling deep, parasympathetic nasal breathing."></div>
 
-                <!-- Text Breakdown -->
-                <div class="space-y-3">
-                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
-                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">1.</span> Glutes (Base of Skull/Jaw)</h3>
-                        <p class="text-[10px] text-zinc-400">Scrub deeply directly under the jawline/base of the ear. Flips the primary hip extension switch.</p>
-                    </div>
-                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
-                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">2.</span> Diaphragm (Sternum)</h3>
-                        <p class="text-[10px] text-zinc-400">Rub vigorously up and down the center of the breastbone. Crucial for core bracing and breathing.</p>
-                    </div>
-                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
-                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">3.</span> Psoas (Lower Abdomen)</h3>
-                        <p class="text-[10px] text-zinc-400">Find the navel. Move 1 inch down, 1 inch out. Dig deep into the tissue. Releases tight hips.</p>
-                    </div>
+                    <div class="rpr-node" style="top: 26%; left: 24%;" data-title="SCAPULA / SERRATUS (Ribs)" data-desc="Scrub the spaces between the ribs directly under the pectoral muscle (ribs 3-5). Turns on the Serratus Anterior, allowing the shoulder blade to upwardly rotate safely."></div>
+                    <div class="rpr-node" style="top: 26%; left: 76%;" data-title="SCAPULA / SERRATUS (Ribs)" data-desc="Scrub the spaces between the ribs directly under the pectoral muscle (ribs 3-5). Turns on the Serratus Anterior, allowing the shoulder blade to upwardly rotate safely."></div>
+
+                    <div class="rpr-node" style="top: 42%; left: 40%;" data-title="PSOAS (Abdomen)" data-desc="Locate the navel. Move 1 inch down, and 1 inch out. Dig deep into the abdominal tissue. Releases chronically tight hip flexors caused by sitting and cycling."></div>
+                    <div class="rpr-node" style="top: 42%; left: 60%;" data-title="PSOAS (Abdomen)" data-desc="Locate the navel. Move 1 inch down, and 1 inch out. Dig deep into the abdominal tissue. Releases chronically tight hip flexors caused by sitting and cycling."></div>
+
+                    <div class="rpr-node" style="top: 52%; left: 35%;" data-title="QUADS (Hip Crease)" data-desc="Vigorously rub along the crease of the hip (inguinal ligament area). Activates the quadriceps for heavy squatting and force absorption."></div>
+                    <div class="rpr-node" style="top: 52%; left: 65%;" data-title="QUADS (Hip Crease)" data-desc="Vigorously rub along the crease of the hip (inguinal ligament area). Activates the quadriceps for heavy squatting and force absorption."></div>
                 </div>
             </div>
 
-            <!-- POSTERIOR (BACK) SECTION -->
-            <div class="p-6">
-                <h2 class="mono text-sm text-orange-400 font-bold mb-4 text-center tracking-widest">POSTERIOR CHAIN (BACK)</h2>
-                
-                <div class="svg-container aspect-[3/4] mb-6">
-                    <svg viewBox="0 0 200 280" class="w-full h-full">
-                        <!-- Basic Back Torso Outline -->
-                        <path d="M85,20 C85,10 115,10 115,20 L115,35 C125,40 140,45 160,55 L170,100 L155,140 L145,250 L55,250 L45,140 L30,100 L40,55 C60,45 75,40 85,35 Z" class="torso-line" />
-                        <path d="M100,20 L100,250" class="torso-line" opacity="0.6"/> <!-- Spine -->
-                        <path d="M60,150 L100,165 L140,150" class="torso-line" opacity="0.4"/> <!-- 12th Rib Line -->
-                        <path d="M85,230 L115,230 L100,260 Z" class="torso-line" opacity="0.4"/> <!-- Sacrum -->
-                    </svg>
-
-                    <!-- NODES: POSTERIOR -->
-                    <!-- QL / Lateral Sling (12th Rib) -->
-                    <div class="rpr-node" style="top: 55%; left: 32%;"></div><div class="node-label" style="top: 55%; left: 10%; transform: translate(0, -50%);">QL & LAT SLING (12th Rib)</div>
-                    <div class="rpr-node" style="top: 55%; left: 68%;"></div>
-
-                    <!-- Glutes / Hamstrings (Sacrum) -->
-                    <div class="rpr-node" style="top: 85%; left: 50%;"></div><div class="node-label" style="top: 85%; left: 50%;">HAMSTRINGS (Sacrum/Tailbone)</div>
+            <!-- CENTER: DIAGNOSTIC READOUT PANEL -->
+            <div class="lg:col-span-4 p-6 lg:p-10 flex flex-col justify-center bg-[#0a0e0c] relative z-10 border-b lg:border-b-0 lg:border-r border-[#23362a]">
+                <div class="text-center mb-8">
+                    <i class="fas fa-fingerprint text-5xl text-[#23362a] mb-4"></i>
+                    <h3 class="mono text-zinc-500 font-bold tracking-widest text-sm uppercase">Diagnostic Readout</h3>
+                    <p class="text-xs text-zinc-600 mt-1">Select a node on the anatomical map.</p>
                 </div>
 
-                <!-- Text Breakdown -->
-                <div class="space-y-3">
-                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
-                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">4.</span> QL & Lateral Sling (12th Rib)</h3>
-                        <p class="text-[10px] text-zinc-400">Scrub the bottom edge of the lowest floating rib on the back. Unbinds the opposite lat and shoulder.</p>
+                <!-- Dynamic Data Target -->
+                <div id="diagnostic-info" class="p-6 rounded-lg min-h-[250px] flex flex-col justify-center">
+                    <div id="default-msg" class="text-center">
+                        <i class="fas fa-bolt text-orange-500 text-3xl mb-3 animate-pulse"></i>
+                        <h4 class="text-white font-bold mono text-lg uppercase tracking-wide">SYSTEM READY</h4>
+                        <p class="text-sm text-zinc-400 mt-2 leading-relaxed">Hover over or tap any glowing activation node to retrieve specific execution protocols and biological mechanisms.</p>
                     </div>
-                    <div class="bg-[#0a0e0c] p-3 rounded border border-[#1f2e24]">
-                        <h3 class="text-white text-xs font-bold uppercase mb-1"><span class="text-orange-500">5.</span> Hamstrings (Sacrum)</h3>
-                        <p class="text-[10px] text-zinc-400">Vigorously scrub the flat bone at the base of the spine (tailbone). Prevents hamstring pulls.</p>
+                    
+                    <div id="active-msg" class="hidden">
+                        <span class="inline-block px-2 py-1 bg-orange-500/20 text-orange-400 border border-orange-500/50 rounded mono text-[10px] font-bold tracking-widest uppercase mb-3">TARGET ACQUIRED</span>
+                        <h4 id="node-title" class="text-white font-black title-font text-2xl uppercase tracking-tighter mb-3 border-b border-zinc-800 pb-2">--</h4>
+                        <p id="node-desc" class="text-sm text-zinc-300 leading-relaxed">--</p>
                     </div>
+                </div>
+
+                <div class="mt-8 bg-[#121c16] p-4 rounded border border-[#23362a]">
+                    <h4 class="text-xs text-orange-400 font-bold mono tracking-widest mb-2"><i class="fas fa-info-circle mr-2"></i>THE DOCTRINE</h4>
+                    <p class="text-xs text-zinc-400 leading-relaxed">Execute 3-5 seconds of vigorous friction or apply 30Hz percussion (Arloleaf Speed 1) to these specific neuro-lymphatic points prior to heavy lifting or BJJ to clear restrictive compensation patterns.</p>
+                </div>
+            </div>
+
+            <!-- RIGHT: POSTERIOR MAP -->
+            <div class="lg:col-span-4 p-6 flex flex-col items-center">
+                <h2 class="mono text-sm text-orange-400 font-bold mb-6 text-center tracking-widest bg-[#0a0e0c] px-4 py-1 rounded border border-[#1f2e24]">POSTERIOR (BACK)</h2>
+                
+                <div class="svg-container aspect-[1/2]">
+                    <div class="scanner-line" style="animation-delay: 2s;"></div>
+                    <!-- High-Fidelity Posterior Anatomy SVG -->
+                    <svg viewBox="0 0 200 400" class="w-full h-full pointer-events-none">
+                        <g class="anatomy-line">
+                            <!-- Head & Neck -->
+                            <path d="M 85 20 C 85 5 115 5 115 20 C 115 35 105 45 100 50 C 95 45 85 35 85 20 Z"/>
+                            <!-- Torso Outline -->
+                            <path d="M 85 55 C 60 55 40 65 35 85 L 35 130 C 45 130 55 170 60 200 L 100 220 L 140 200 C 145 170 155 130 165 130 L 165 85 C 160 65 140 55 115 55 Z"/>
+                            <!-- Spine & Back Muscles (Traps/Lats) -->
+                            <line x1="100" y1="50" x2="100" y2="215" stroke-dasharray="3 3"/>
+                            <path d="M 95 65 L 70 80 L 60 120 L 90 120 Z"/> <!-- L Scapula -->
+                            <path d="M 105 65 L 130 80 L 140 120 L 110 120 Z"/> <!-- R Scapula -->
+                            <path d="M 60 120 L 95 190 M 140 120 L 105 190"/> <!-- Lats -->
+                            <path d="M 60 200 C 50 220 70 230 100 230 C 130 230 150 220 140 200 Z"/> <!-- Glute crease -->
+                            <!-- Arms -->
+                            <path d="M 35 85 C 20 90 15 110 15 140 L 22 200 L 35 130 Z"/>
+                            <path d="M 165 85 C 180 90 185 110 185 140 L 178 200 L 165 130 Z"/>
+                            <!-- Legs (Hamstrings) -->
+                            <path d="M 60 200 C 45 250 50 280 55 310 L 85 310 C 95 280 95 230 95 215 Z"/>
+                            <path d="M 140 200 C 155 250 150 280 145 310 L 115 310 C 105 280 105 230 105 215 Z"/>
+                            <line x1="70" y1="230" x2="70" y2="310"/> <!-- Hamstring lines -->
+                            <line x1="130" y1="230" x2="130" y2="310"/>
+                            <!-- Calves -->
+                            <path d="M 55 310 C 45 350 55 380 60 390 L 80 390 C 85 360 85 330 85 310 Z"/>
+                            <path d="M 145 310 C 155 350 145 380 140 390 L 120 390 C 115 360 115 330 115 310 Z"/>
+                        </g>
+                    </svg>
+
+                    <!-- INTERACTIVE RPR NODES: POSTERIOR -->
+                    <div class="rpr-node" style="top: 8%; left: 50%;" data-title="POSTERIOR CHAIN (Skull)" data-desc="Base of the skull (Occipital ridge). Rub vigorously to release total-body posterior dural tension and facilitate full hip extension."></div>
+
+                    <div class="rpr-node" style="top: 13.5%; left: 40%;" data-title="NECK & TRAPS" data-desc="Base of the neck, top of the trapezius. Releases cervical tension, especially important after taking heavy collar-ties in BJJ or sitting at a desk."></div>
+                    <div class="rpr-node" style="top: 13.5%; left: 60%;" data-title="NECK & TRAPS" data-desc="Base of the neck, top of the trapezius. Releases cervical tension, especially important after taking heavy collar-ties in BJJ or sitting at a desk."></div>
+
+                    <div class="rpr-node" style="top: 42.5%; left: 35%;" data-title="QL & LATERAL SLING (12th Rib)" data-desc="Dig into the bottom edge of the lowest floating rib (12th rib) on the back. Highly uncomfortable but instantly unbinds the opposite lat and frees the opposite shoulder."></div>
+                    <div class="rpr-node" style="top: 42.5%; left: 65%;" data-title="QL & LATERAL SLING (12th Rib)" data-desc="Dig into the bottom edge of the lowest floating rib (12th rib) on the back. Highly uncomfortable but instantly unbinds the opposite lat and frees the opposite shoulder."></div>
+
+                    <div class="rpr-node" style="top: 50%; left: 25%;" data-title="GLUTE MEDIUS" data-desc="Upper outer quadrant of the glute. Triggers lateral stability, preventing the knees from collapsing inward (valgus) during heavy lifts or athletic cuts."></div>
+                    <div class="rpr-node" style="top: 50%; left: 75%;" data-title="GLUTE MEDIUS" data-desc="Upper outer quadrant of the glute. Triggers lateral stability, preventing the knees from collapsing inward (valgus) during heavy lifts or athletic cuts."></div>
+
+                    <div class="rpr-node" style="top: 54%; left: 50%;" data-title="HAMSTRINGS (Sacrum)" data-desc="Vigorously scrub the flat bone at the base of the spine (the tailbone/sacrum). Immediately turns on the hamstrings and helps prevent pulls."></div>
+
+                    <div class="rpr-node" style="top: 77.5%; left: 35%;" data-title="CALVES & KNEES" data-desc="Back of the knee joint line where the calf and hamstring tie together. Activates the lower leg complex for sprinting and force absorption."></div>
+                    <div class="rpr-node" style="top: 77.5%; left: 65%;" data-title="CALVES & KNEES" data-desc="Back of the knee joint line where the calf and hamstring tie together. Activates the lower leg complex for sprinting and force absorption."></div>
+                    
+                    <div class="rpr-node" style="top: 97.5%; left: 35%;" data-title="ACHILLES / HEEL" data-desc="Scrub the back of the heel bone. Primes the Achilles tendon spring mechanism for overspeed eccentrics and drop jumps."></div>
+                    <div class="rpr-node" style="top: 97.5%; left: 65%;" data-title="ACHILLES / HEEL" data-desc="Scrub the back of the heel bone. Primes the Achilles tendon spring mechanism for overspeed eccentrics and drop jumps."></div>
                 </div>
             </div>
 
         </div>
     </div>
 
+    <script>
+        const nodes = document.querySelectorAll('.rpr-node');
+        const defaultMsg = document.getElementById('default-msg');
+        const activeMsg = document.getElementById('active-msg');
+        const titleEl = document.getElementById('node-title');
+        const descEl = document.getElementById('node-desc');
+        const panel = document.getElementById('diagnostic-info');
+
+        nodes.forEach(node => {
+            // Hover events for desktop
+            node.addEventListener('mouseenter', () => activateNode(node));
+            node.addEventListener('mouseleave', deactivateNode);
+            
+            // Click events for mobile
+            node.addEventListener('click', (e) => {
+                // Remove active class from all other nodes
+                nodes.forEach(n => n.classList.remove('active'));
+                node.classList.add('active');
+                activateNode(node);
+                e.stopPropagation();
+            });
+        });
+
+        // Click outside to reset on mobile
+        document.body.addEventListener('click', () => {
+            nodes.forEach(n => n.classList.remove('active'));
+            deactivateNode();
+        });
+
+        function activateNode(node) {
+            const title = node.getAttribute('data-title');
+            const desc = node.getAttribute('data-desc');
+            
+            titleEl.innerHTML = title;
+            descEl.innerHTML = desc;
+            
+            defaultMsg.classList.add('hidden');
+            activeMsg.classList.remove('hidden');
+            
+            // Visual pop on the panel
+            panel.style.backgroundColor = '#16201a';
+            panel.style.borderColor = '#FF851B';
+        }
+
+        function deactivateNode() {
+            // Only deactivate if no node is currently clicked/active
+            const hasActive = Array.from(nodes).some(n => n.classList.contains('active'));
+            if (!hasActive) {
+                defaultMsg.classList.remove('hidden');
+                activeMsg.classList.add('hidden');
+                
+                panel.style.backgroundColor = '#0a0e0c';
+                panel.style.borderColor = '#23362a';
+            }
+        }
+    </script>
 </body>
 </html>
